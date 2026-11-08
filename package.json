@@ -4,5 +4,10 @@
   "private": true,
   "type": "module",
   "description": "Bulls and Cows game with a pure functional core",
-  "scripts": {}
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
 }
