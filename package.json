@@ -5,9 +5,11 @@
   "type": "module",
   "description": "Bulls and Cows game with a pure functional core",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.12"
   }
 }
