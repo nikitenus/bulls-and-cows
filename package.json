@@ -1,0 +1,8 @@
+{
+  "name": "bulls-and-cows",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Bulls and Cows game with a pure functional core",
+  "scripts": {}
+}
