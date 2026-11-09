@@ -1,6 +1,20 @@
 export const memoize = <Args extends readonly unknown[], Result>(
-  _fn: (...args: Args) => Result,
-  _keyFn?: (...args: Args) => string,
+  fn: (...args: Args) => Result,
+  keyFn: (...args: Args) => string = (...args) => JSON.stringify(args),
 ): ((...args: Args) => Result) => {
-  throw new Error('not implemented');
+  const cache = new Map<string, Result>();
+
+  return (...args: Args): Result => {
+    const key = keyFn(...args);
+    const cached = cache.get(key);
+
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    const value = fn(...args);
+    cache.set(key, value);
+
+    return value;
+  };
 };
