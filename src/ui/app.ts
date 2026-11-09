@@ -1,8 +1,10 @@
 import { countPossibleSecrets } from '../core/count-possible-secrets.js';
 import { createDigitValidator } from '../core/create-digit-validator.js';
 import { DIGITS_BY_BASE } from '../core/digits.js';
-import { applyGuess, createIdleState, newGame, startRound } from '../core/state.js';
-import type { Attempt, Base, GameState, Settings } from '../core/types.js';
+import { addRecord } from '../core/leaderboard.js';
+import { createRecordsStore } from '../core/records-store.js';
+import { applyGuess, createIdleState, newGame, startRound, toRecordEntry } from '../core/state.js';
+import type { Attempt, Base, GameState, RecordEntry, Settings } from '../core/types.js';
 import { el } from './dom.js';
 
 const LENGTHS = [2, 3, 4, 5, 6];
@@ -16,6 +18,7 @@ const BASE_LABELS: Record<Base, string> = {
 };
 
 export type AppDeps = {
+  storage: Storage;
   now: () => number;
   random: () => number;
 };
@@ -25,6 +28,7 @@ type AppState = {
   settingsDraft: Settings;
   draft: string;
   message: string | null;
+  records: readonly RecordEntry[];
 };
 
 const availableLengths = (base: Base): number[] =>
@@ -38,11 +42,14 @@ const formatDuration = (timeMs: number): string => `${(timeMs / 1000).toFixed(1)
 const formatNumber = (value: number): string => value.toLocaleString('en-US');
 
 export const createApp = (root: HTMLElement, deps: AppDeps): void => {
+  const recordsStore = createRecordsStore(deps.storage);
+
   const state: AppState = {
     game: createIdleState(),
     settingsDraft: { length: 4, base: 10 },
     draft: '',
     message: null,
+    records: recordsStore.load(),
   };
 
   const focusGuess = (): void => {
@@ -101,6 +108,16 @@ export const createApp = (root: HTMLElement, deps: AppDeps): void => {
     state.game = next;
     state.draft = '';
     state.message = null;
+
+    if (outcome === 'won') {
+      const entry = toRecordEntry(next);
+
+      if (entry !== null) {
+        state.records = addRecord(state.records, entry);
+        recordsStore.save(state.records);
+      }
+    }
+
     render();
 
     if (next.status === 'playing') {
@@ -127,13 +144,44 @@ export const createApp = (root: HTMLElement, deps: AppDeps): void => {
 
     return el('section', {}, [
       el('h2', { textContent: 'Attempts' }),
-      el('table', {}, [
+      el('table', { className: 'history' }, [
         el('thead', {}, [
           el('tr', {}, [
             el('th', { textContent: '#' }),
             el('th', { textContent: 'Guess' }),
             el('th', { textContent: 'Bulls' }),
             el('th', { textContent: 'Cows' }),
+          ]),
+        ]),
+        el('tbody', {}, body),
+      ]),
+    ]);
+  };
+
+  const renderLeaderboard = (): HTMLElement => {
+    const rows = state.records.map((entry, index) =>
+      el('tr', {}, [
+        el('td', { textContent: String(index + 1) }),
+        el('td', { textContent: String(entry.attempts) }),
+        el('td', { textContent: formatDuration(entry.timeMs) }),
+        el('td', { textContent: describeSettings({ length: entry.length, base: entry.base }) }),
+      ]),
+    );
+
+    const body =
+      rows.length > 0
+        ? rows
+        : [el('tr', {}, [el('td', { colSpan: 4, textContent: 'No records yet.' })])];
+
+    return el('section', {}, [
+      el('h2', { textContent: 'Best results' }),
+      el('table', { className: 'leaderboard' }, [
+        el('thead', {}, [
+          el('tr', {}, [
+            el('th', { textContent: '#' }),
+            el('th', { textContent: 'Attempts' }),
+            el('th', { textContent: 'Time' }),
+            el('th', { textContent: 'Settings' }),
           ]),
         ]),
         el('tbody', {}, body),
@@ -201,6 +249,7 @@ export const createApp = (root: HTMLElement, deps: AppDeps): void => {
           'Guess the secret number. Bulls are correct digits in the correct place, cows are correct digits in the wrong place.',
       }),
       form,
+      renderLeaderboard(),
     ]);
   };
 
@@ -267,6 +316,7 @@ export const createApp = (root: HTMLElement, deps: AppDeps): void => {
       form,
       feedback,
       renderHistory(game.history),
+      isWon ? renderLeaderboard() : null,
     ].filter((node): node is HTMLElement => node !== null);
 
     return el('main', { className: 'card' }, children);
