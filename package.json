@@ -5,7 +5,9 @@
   "type": "module",
   "description": "Bulls and Cows game with a pure functional core",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
+    "build:site": "npm run build && node scripts/build-site.mjs",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
