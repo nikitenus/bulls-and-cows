@@ -1,0 +1,209 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --text: #182028;
+  --muted: #5b6875;
+  --accent: #2f6feb;
+  --accent-text: #ffffff;
+  --border: #d8dfe7;
+  --bull: #1f8a4c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1317;
+    --surface: #161d24;
+    --text: #e6edf4;
+    --muted: #97a4b1;
+    --accent: #5d93ff;
+    --accent-text: #0b1220;
+    --border: #27313b;
+    --bull: #4ac97e;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 2.5rem 1rem;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    16px/1.55 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+
+#root {
+  width: min(100%, 46rem);
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.75rem;
+  box-shadow: 0 12px 32px rgb(15 23 32 / 8%);
+}
+
+h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.65rem;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  margin: 1.75rem 0 0.5rem;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.hint,
+.feedback {
+  margin: 0.25rem 0 1rem;
+  color: var(--muted);
+}
+
+.feedback:empty {
+  display: none;
+}
+
+.banner {
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--bull);
+  color: var(--bull);
+  font-weight: 600;
+}
+
+.settings,
+.guess-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.field label,
+.guess-form label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+select,
+input,
+button {
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: inherit;
+}
+
+input.guess {
+  width: 9rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+button {
+  cursor: pointer;
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+button:disabled,
+select:disabled,
+input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header .hint {
+  margin: 0;
+}
+
+header button {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--border);
+}
+
+@media (max-width: 30rem) {
+  .card {
+    padding: 1.25rem;
+  }
+
+  .settings,
+  .guess-form {
+    align-items: stretch;
+  }
+
+  .field,
+  input.guess,
+  .settings button,
+  .guess-form button {
+    width: 100%;
+  }
+}
