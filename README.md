@@ -4,8 +4,6 @@ A browser implementation of the classic code-breaking game. The computer picks a
 
 The focus of this project is the architecture: the whole game logic is a set of pure functions with no classes and no DOM dependency.
 
-**Live demo:** https://nikitenus.github.io/bulls-and-cows/
-
 ## Features
 
 - Secret length from 2 to 6 digits.
@@ -56,4 +54,11 @@ src/
 
 ## Deploy
 
-Every push to `bulls-and-cows` builds the project and publishes it to GitHub Pages via the workflow in `.github/workflows/deploy.yml`. The Pages source must be set to **GitHub Actions**.
+The site is deployed on Netlify from the `bulls-and-cows` branch. The configuration lives in `netlify.toml`: build command `npm run build:site`, publish directory `_site`. The script compiles TypeScript and assembles `index.html`, `styles.css` and `dist/` into `_site`.
+
+To check the production build locally:
+
+```sh
+npm run build:site
+npx serve _site -l 3000
+```
